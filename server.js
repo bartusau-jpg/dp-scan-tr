@@ -34,7 +34,7 @@ app.get("/fetch", async (req, res) => {
       timeout: 30000
     });
 
-    await page.waitForTimeout(2000);
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     const data = await page.evaluate(() => {
       return {
