@@ -17,10 +17,11 @@ app.get("/fetch", async (req, res) => {
   let browser;
 
   try {
-    console.log("Browser başlıyor...");
+    console.log("Chrome başlıyor...");
 
     browser = await puppeteer.launch({
       headless: "new",
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -30,8 +31,7 @@ app.get("/fetch", async (req, res) => {
 
     const page = await browser.newPage();
 
-    page.setDefaultNavigationTimeout(30000);
-    page.setDefaultTimeout(30000);
+    await page.setDefaultNavigationTimeout(30000);
 
     console.log("Sayfa açılıyor...");
 
@@ -41,8 +41,6 @@ app.get("/fetch", async (req, res) => {
     });
 
     await page.waitForTimeout(3000);
-
-    console.log("İçerik alınıyor...");
 
     const data = await page.evaluate(() => {
       return {
@@ -55,7 +53,7 @@ app.get("/fetch", async (req, res) => {
 
     console.log("Bitti");
 
-    return res.json({
+    res.json({
       success: true,
       ...data
     });
@@ -65,15 +63,15 @@ app.get("/fetch", async (req, res) => {
 
     console.log("HATA:", err.message);
 
-    return res.json({
+    res.json({
       success: false,
       error: err.message
     });
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log("Server running on port " + PORT);
 });
